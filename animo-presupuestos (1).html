@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ánimo · Presupuestos</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --black: #0c0c0c; --card: #1a1a1a; --card2: #222;
+  --border: #2a2a2a; --border2: #3a3a3a;
+  --yellow: #f5e400; --white: #f0ede6; --muted: #777; --muted2: #444;
+  --red: #e84040; --green: #3dba6e;
+  --font: -apple-system,'Helvetica Neue',Arial,sans-serif;
+  --mono: 'Courier New',monospace;
+}
+html,body{background:var(--black);color:var(--white);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:18px 18px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--black);z-index:100;}
+.logo-mark{font-weight:800;font-size:20px;letter-spacing:-0.5px;color:var(--white);}
+.logo-mark span{color:var(--yellow);}
+.logo-sub{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.12em;margin-top:2px;}
+.header-reset{background:transparent;border:1px solid var(--border2);border-radius:8px;color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;padding:7px 12px;cursor:pointer;}
+.main{padding:0 16px 140px;}
+
+/* REC HERO */
+.rec-hero{margin-top:24px;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color 0.2s;}
+.rec-hero.recording{border-color:var(--red);}
+.rec-hero.processing{border-color:var(--yellow);}
+.rec-hero.done{border-color:var(--green);}
+.rec-top{padding:20px 18px 16px;display:flex;flex-direction:column;align-items:center;gap:16px;}
+.rec-btn{width:80px;height:80px;border-radius:50%;border:2px solid var(--border2);background:var(--card2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;-webkit-tap-highlight-color:transparent;}
+.rec-btn svg{width:32px;height:32px;color:var(--white);}
+.rec-btn.active{background:var(--red);border-color:var(--red);animation:pulse-ring 1.5s infinite;}
+.rec-btn.active svg{color:#fff;}
+@keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(232,64,64,0.35);}70%{box-shadow:0 0 0 18px rgba(232,64,64,0);}100%{box-shadow:0 0 0 0 rgba(232,64,64,0);}}
+.rec-info{text-align:center;}
+.rec-label{font-size:15px;font-weight:600;color:var(--white);margin-bottom:4px;}
+.rec-sublabel{font-size:12px;color:var(--muted);line-height:1.6;}
+.rec-timer{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--red);letter-spacing:0.05em;display:none;margin-top:4px;}
+.rec-timer.on{display:block;}
+.waveform{height:44px;width:100%;display:flex;align-items:center;justify-content:center;gap:3px;padding:0 16px;overflow:hidden;}
+.wb{width:3px;border-radius:2px;background:var(--border2);height:4px;transition:height 0.08s;flex-shrink:0;}
+.recording .wb{background:var(--red);}
+.processing .wb{background:var(--yellow);animation:widle 0.9s ease-in-out infinite;}
+.processing .wb:nth-child(3n+1){animation-delay:0s;}
+.processing .wb:nth-child(3n+2){animation-delay:0.3s;}
+.processing .wb:nth-child(3n){animation-delay:0.6s;}
+@keyframes widle{0%,100%{height:4px;}50%{height:20px;}}
+.rec-status-bar{border-top:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--muted);min-height:38px;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--muted2);flex-shrink:0;}
+.dot.red{background:var(--red);animation:blink 1s infinite;}
+.dot.yellow{background:var(--yellow);animation:blink 0.6s infinite;}
+.dot.green{background:var(--green);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.15}}
+
+/* LIVE TRANSCRIPT */
+.live-box{display:none;margin:0 0 0;border-top:1px solid var(--border);padding:10px 16px 12px;font-size:12px;color:var(--muted);font-style:italic;line-height:1.5;min-height:36px;max-height:80px;overflow:hidden;}
+.live-box.on{display:block;}
+.live-box .interim{color:var(--muted);}
+.live-box .final{color:var(--white);}
+
+/* TRANSCRIPTION */
+.trans-block{display:none;margin-top:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.trans-block.on{display:block;}
+.trans-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);}
+.trans-lbl{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
+.trans-edit{font-family:var(--mono);font-size:10px;color:var(--yellow);background:none;border:none;cursor:pointer;text-transform:uppercase;padding:0;}
+.trans-txt{padding:12px 14px;font-size:13px;line-height:1.7;color:var(--white);white-space:pre-wrap;}
+textarea.trans-ta{width:100%;background:transparent;border:none;outline:none;color:var(--white);font-family:var(--font);font-size:13px;line-height:1.7;padding:12px 14px;resize:none;min-height:100px;display:none;}
+textarea.trans-ta.on{display:block;}
+
+/* REPROCESS */
+.reproc-btn{display:none;width:100%;margin-top:10px;background:transparent;border:1px solid rgba(245,228,0,0.25);border-radius:10px;color:var(--yellow);font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;padding:12px;cursor:pointer;align-items:center;justify-content:center;gap:8px;}
+.reproc-btn.on{display:flex;}
+
+/* SECTION */
+.section-lbl{font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px 2px;}
+.fields-grid{display:flex;flex-direction:column;gap:8px;}
+.fcard{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.fcard.filled{border-color:var(--border2);}
+.fcard.missing{border-color:rgba(232,64,64,0.45);}
+.fhdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 8px;border-bottom:1px solid var(--border);}
+.ftitle{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--yellow);}
+.fbadge{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:4px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;}
+.fbadge.auto{background:rgba(61,186,110,0.15);color:var(--green);}
+.fbadge.manual{background:rgba(232,64,64,0.12);color:var(--red);}
+textarea.fta{width:100%;background:transparent;border:none;outline:none;color:var(--white);font-family:var(--font);font-size:13px;line-height:1.6;padding:10px 14px;resize:none;min-height:64px;}
+textarea.fta::placeholder{color:var(--muted2);}
+textarea.fta.sm{min-height:44px;}
+input.fin{width:100%;background:transparent;border:none;outline:none;color:var(--white);font-family:var(--font);font-size:13px;padding:10px 14px;color-scheme:dark;}
+input.fin::placeholder{color:var(--muted2);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+/* GEN BTN */
+.gen-wrap{position:fixed;bottom:0;left:0;right:0;padding:16px 16px 28px;background:linear-gradient(to top,var(--black) 65%,transparent);}
+.gen-btn{width:100%;background:var(--yellow);color:var(--black);border:none;border-radius:12px;font-weight:800;font-size:14px;letter-spacing:0.08em;text-transform:uppercase;padding:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+.gen-btn:active{opacity:0.8;}
+.gen-btn svg{width:16px;height:16px;}
+.gen-btn:disabled{opacity:0.35;cursor:not-allowed;}
+
+/* TOAST */
+.toast{position:fixed;top:76px;left:50%;transform:translateX(-50%) translateY(-12px);background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:9px 16px;font-size:12px;font-family:var(--mono);color:var(--white);z-index:999;opacity:0;transition:all 0.25s;white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center;}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:var(--green);color:var(--green);}
+.toast.err{border-color:var(--red);color:var(--red);}
+.spin{width:12px;height:12px;border:2px solid rgba(245,228,0,0.2);border-top-color:var(--yellow);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="logo-mark">ÁNIM<span>O</span></div>
+    <div class="logo-sub">/ presupuestos</div>
+  </div>
+  <button class="header-reset" onclick="resetAll()">↺ Nuevo</button>
+</div>
+
+<div class="main">
+  <div class="rec-hero" id="hero">
+    <div class="rec-top">
+      <div class="rec-btn" id="rec-btn" onclick="toggleRec()">
+        <svg id="rec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </div>
+      <div class="rec-info">
+        <div class="rec-label" id="rec-lbl">Grabá tu presupuesto</div>
+        <div class="rec-sublabel" id="rec-sub">Contá el proyecto, técnica, entregables,<br>costo y tiempos en un solo audio</div>
+        <div class="rec-timer" id="rec-timer">0:00</div>
+      </div>
+    </div>
+    <div class="waveform" id="waveform"></div>
+    <div class="live-box" id="live-box"><span id="live-final" class="final"></span><span id="live-interim" class="interim"></span></div>
+    <div class="rec-status-bar">
+      <div class="dot" id="rec-dot"></div>
+      <span id="rec-status">Tocá el micrófono para comenzar</span>
+    </div>
+  </div>
+
+  <div class="trans-block" id="trans-block">
+    <div class="trans-hdr">
+      <span class="trans-lbl">Transcripción</span>
+      <button class="trans-edit" id="trans-edit-btn" onclick="toggleEdit()">Editar</button>
+    </div>
+    <div class="trans-txt" id="trans-txt"></div>
+    <textarea class="trans-ta" id="trans-ta" placeholder="Editá la transcripción..."></textarea>
+  </div>
+
+  <button class="reproc-btn" id="reproc-btn" onclick="reprocess()">
+    <div class="spin" id="reproc-spin" style="display:none"></div>
+    <span id="reproc-lbl">↺ Re-extraer con texto editado</span>
+  </button>
+
+  <div id="fields-sec" style="display:none">
+    <div class="section-lbl">Datos del presupuesto</div>
+    <div class="fields-grid">
+      <div class="row2">
+        <div class="fcard" id="card-cliente">
+          <div class="fhdr"><div class="ftitle">Cliente</div><div class="fbadge" id="badge-cliente"></div></div>
+          <input class="fin" id="f-cliente" placeholder="Nombre..."/>
+        </div>
+        <div class="fcard">
+          <div class="fhdr"><div class="ftitle">Fecha</div></div>
+          <input class="fin" type="date" id="f-fecha"/>
+        </div>
+      </div>
+      <div class="fcard" id="card-titulo">
+        <div class="fhdr"><div class="ftitle">Título del proyecto</div><div class="fbadge" id="badge-titulo"></div></div>
+        <input class="fin" id="f-titulo" placeholder="Nombre del proyecto..."/>
+      </div>
+      <div class="fcard" id="card-propuesta">
+        <div class="fhdr"><div class="ftitle">Propuesta</div><div class="fbadge" id="badge-propuesta"></div></div>
+        <textarea class="fta" id="f-propuesta" placeholder="Completá manualmente..." oninput="ar(this)"></textarea>
+      </div>
+      <div class="fcard" id="card-tecnica">
+        <div class="fhdr"><div class="ftitle">Técnica propuesta</div><div class="fbadge" id="badge-tecnica"></div></div>
+        <textarea class="fta" id="f-tecnica" placeholder="Completá manualmente..." oninput="ar(this)"></textarea>
+      </div>
+      <div class="fcard" id="card-entregables">
+        <div class="fhdr"><div class="ftitle">Entregables</div><div class="fbadge" id="badge-entregables"></div></div>
+        <textarea class="fta" id="f-entregables" placeholder="Completá manualmente..." oninput="ar(this)"></textarea>
+      </div>
+      <div class="row2">
+        <div class="fcard" id="card-costo">
+          <div class="fhdr"><div class="ftitle">Costo</div><div class="fbadge" id="badge-costo"></div></div>
+          <textarea class="fta sm" id="f-costo" placeholder="USD ..." oninput="ar(this)"></textarea>
+        </div>
+        <div class="fcard" id="card-tiempo">
+          <div class="fhdr"><div class="ftitle">Tiempo</div><div class="fbadge" id="badge-tiempo"></div></div>
+          <textarea class="fta sm" id="f-tiempo" placeholder="X semanas..." oninput="ar(this)"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="gen-wrap">
+  <button class="gen-btn" id="gen-btn" onclick="generatePDF()" disabled>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+    Generar PDF
+  </button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const MODEL = "claude-sonnet-4-20250514";
+let recog = null, isRec = false, timerInt = null, timerSec = 0;
+let finalText = '', interimText = '';
+let animFrame = null, analyser = null, actx = null;
+let dummyStream = null;
+
+// INIT
+window.addEventListener('load', () => {
+  document.getElementById('f-fecha').value = new Date().toISOString().split('T')[0];
+  const wf = document.getElementById('waveform');
+  for(let i=0;i<40;i++){const b=document.createElement('div');b.className='wb';b.id='wb'+i;wf.appendChild(b);}
+  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
+    document.getElementById('rec-sub').textContent = 'Tu browser no soporta reconocimiento de voz. Usá Chrome.';
+  }
+});
+
+// TOGGLE REC
+function toggleRec(){
+  if(isRec) stopRec();
+  else startRec();
+}
+
+async function startRec(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ toast('Usá Chrome para grabar voz','err'); return; }
+
+  // Pedir permisos de mic explícitamente primero
+  try {
+    dummyStream = await navigator.mediaDevices.getUserMedia({audio:true});
+    // Waveform con el stream real
+    actx = new (window.AudioContext||window.webkitAudioContext)();
+    const src = actx.createMediaStreamSource(dummyStream);
+    analyser = actx.createAnalyser(); analyser.fftSize = 128;
+    src.connect(analyser);
+    animWave();
+  } catch(e){
+    toast('Permiso de micrófono denegado','err'); return;
+  }
+
+  recog = new SR();
+  recog.lang = 'es-AR';
+  recog.continuous = true;
+  recog.interimResults = true;
+  finalText = ''; interimText = '';
+
+  recog.onresult = e => {
+    let fin = '', int = '';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal) fin += e.results[i][0].transcript + ' ';
+      else int += e.results[i][0].transcript;
+    }
+    if(fin) finalText += fin;
+    interimText = int;
+    document.getElementById('live-final').textContent = finalText;
+    document.getElementById('live-interim').textContent = int ? '…' + int : '';
+  };
+
+  recog.onerror = e => {
+    if(e.error === 'no-speech') return; // ignorar silencios
+    console.error('SR error:', e.error);
+    if(e.error !== 'aborted') toast('Error de reconocimiento: ' + e.error, 'err');
+  };
+
+  recog.onend = () => {
+    // Si todavía está en modo grabación, reiniciar (Chrome corta cada ~60s)
+    if(isRec) { try{ recog.start(); }catch(e){} }
+  };
+
+  recog.start();
+  isRec = true;
+  timerSec = 0;
+  timerInt = setInterval(()=>{
+    timerSec++;
+    const m=Math.floor(timerSec/60), s=String(timerSec%60).padStart(2,'0');
+    document.getElementById('rec-timer').textContent = m+':'+s;
+  }, 1000);
+
+  document.getElementById('hero').classList.add('recording');
+  document.getElementById('rec-btn').classList.add('active');
+  document.getElementById('rec-lbl').textContent = 'Grabando...';
+  document.getElementById('rec-sub').textContent = 'Tocá de nuevo para detener y procesar';
+  document.getElementById('rec-timer').classList.add('on');
+  document.getElementById('rec-dot').className = 'dot red';
+  document.getElementById('rec-status').textContent = 'Escuchando y transcribiendo en tiempo real...';
+  document.getElementById('live-box').classList.add('on');
+  setIcon('stop');
+}
+
+function stopRec(){
+  isRec = false;
+  clearInterval(timerInt);
+  cancelAnimationFrame(animFrame);
+
+  if(recog){ try{recog.stop();}catch(e){} recog=null; }
+  if(dummyStream){ dummyStream.getTracks().forEach(t=>t.stop()); dummyStream=null; }
+  if(actx){ actx.close(); actx=null; }
+
+  document.querySelectorAll('.wb').forEach(b=>b.style.height='4px');
+  document.getElementById('live-box').classList.remove('on');
+
+  const captured = finalText.trim();
+  if(!captured){
+    toast('No se capturó texto · intentá de nuevo','err');
+    resetRecUI();
+    return;
+  }
+
+  // Pasar a procesamiento
+  document.getElementById('hero').classList.remove('recording');
+  document.getElementById('hero').classList.add('processing');
+  document.getElementById('rec-btn').classList.remove('active');
+  document.getElementById('rec-btn').style.pointerEvents='none';
+  document.getElementById('rec-lbl').textContent = 'Procesando...';
+  document.getElementById('rec-sub').textContent = 'Claude está extrayendo los datos';
+  document.getElementById('rec-timer').classList.remove('on');
+  document.getElementById('rec-dot').className = 'dot yellow';
+  document.getElementById('rec-status').textContent = 'Analizando transcripción con IA...';
+  setIcon('spin');
+
+  extractFields(captured);
+}
+
+function animWave(){
+  const data = new Uint8Array(analyser.frequencyBinCount);
+  const bars = document.querySelectorAll('.wb');
+  function draw(){
+    animFrame = requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(data);
+    bars.forEach((b,i)=>{
+      const v = data[Math.floor(i*data.length/bars.length)]/255;
+      b.style.height = Math.max(3, v*40)+'px';
+    });
+  }
+  draw();
+}
+
+function setIcon(t){
+  const ic = document.getElementById('rec-icon');
+  ic.style.animation='';
+  if(t==='stop'){
+    ic.innerHTML='<rect x="7" y="7" width="10" height="10" rx="2" fill="white" stroke="none"/>';
+  } else if(t==='spin'){
+    ic.innerHTML='<circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" stroke-dasharray="20 12" stroke-linecap="round"/>';
+    ic.style.animation='spin 1s linear infinite';
+  } else {
+    ic.innerHTML='<path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>';
+  }
+}
+
+// EXTRACT FIELDS VIA CLAUDE
+async function extractFields(text){
+  const prompt = `Sos el asistente de Estudio Ánimo, estudio de animación profesional de Argentina.
+El siguiente texto es la transcripción de voz de alguien describiendo un presupuesto de trabajo de animación:
+
+"${text}"
+
+Extraé los datos y respondé ÚNICAMENTE con JSON válido sin markdown ni backticks:
+{"transcripcion":"texto limpio y corregido ortograficamente","cliente":"nombre del cliente o null","titulo":"nombre del proyecto o null","propuesta":"descripción profesional de lo que se propone hacer o null","tecnica":"técnica de animación (2D, 3D, motion graphics, etc) o null","entregables":"entregables del proyecto o null","costo":"costo aproximado mencionado o null","tiempo":"tiempo de realización o null"}
+
+Reglas: español rioplatense, textos limpios y profesionales, si algo no se menciona explícitamente poné null, no inventar datos.`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        model: MODEL, max_tokens: 1200,
+        messages: [{role:"user", content: prompt}]
+      })
+    });
+    const data = await res.json();
+    if(data.error) throw new Error(data.error.message||'API error');
+    const raw = (data.content?.[0]?.text||'').trim();
+    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    fillFields(parsed);
+  } catch(err){
+    console.error(err);
+    // Fallback: mostrar transcripción igual y dejar campos manuales
+    fillFields({ transcripcion: text, cliente:null, titulo:null, propuesta:null, tecnica:null, entregables:null, costo:null, tiempo:null });
+    toast('No se pudo conectar con IA · completá los campos', 'err');
+  }
+}
+
+function fillFields(data){
+  document.getElementById('trans-txt').textContent = data.transcripcion||'';
+  document.getElementById('trans-ta').value = data.transcripcion||'';
+  document.getElementById('trans-block').classList.add('on');
+  document.getElementById('reproc-btn').classList.add('on');
+
+  const map = {cliente:'f-cliente',titulo:'f-titulo',propuesta:'f-propuesta',tecnica:'f-tecnica',entregables:'f-entregables',costo:'f-costo',tiempo:'f-tiempo'};
+  let missing = false;
+  Object.entries(map).forEach(([k,id])=>{
+    const v = data[k]; const el = document.getElementById(id);
+    const card = document.getElementById('card-'+k);
+    const badge = document.getElementById('badge-'+k);
+    if(v && v!=='null' && v!==null){
+      el.value = v;
+      if(card){card.className='fcard filled';}
+      if(badge){badge.textContent='auto';badge.className='fbadge auto';}
+      if(el.tagName==='TEXTAREA') ar(el);
+    } else {
+      el.value='';
+      if(card){card.className='fcard missing';}
+      if(badge){badge.textContent='manual';badge.className='fbadge manual';}
+      missing=true;
+    }
+  });
+
+  document.getElementById('hero').classList.remove('processing');
+  document.getElementById('hero').classList.add('done');
+  document.getElementById('rec-btn').style.pointerEvents='auto';
+  document.getElementById('rec-dot').className='dot green';
+  document.getElementById('rec-lbl').textContent = missing ? 'Audio procesado · faltan datos' : 'Audio procesado ✓';
+  document.getElementById('rec-sub').textContent = missing ? 'Completá los campos en rojo' : 'Todos los campos completados';
+  document.getElementById('rec-status').textContent = missing ? 'Campos faltantes marcados ↓' : 'Todo listo para el PDF ↓';
+  setIcon('mic');
+
+  document.getElementById('fields-sec').style.display='block';
+  document.getElementById('gen-btn').disabled=false;
+  if(missing) toast('Completá los campos en rojo','');
+  else toast('Todo listo ✓','ok');
+  setTimeout(()=>document.getElementById('fields-sec').scrollIntoView({behavior:'smooth',block:'start'}),300);
+}
+
+async function reprocess(){
+  const ta = document.getElementById('trans-ta');
+  const txt = ta.classList.contains('on') ? ta.value : document.getElementById('trans-txt').textContent;
+  if(!txt.trim()) return;
+  const btn=document.getElementById('reproc-btn');
+  const spin=document.getElementById('reproc-spin');
+  const lbl=document.getElementById('reproc-lbl');
+  spin.style.display='inline-block'; lbl.textContent='Procesando...'; btn.disabled=true;
+  await extractFields(txt);
+  spin.style.display='none'; lbl.textContent='↺ Re-extraer con texto editado'; btn.disabled=false;
+}
+
+function toggleEdit(){
+  const txt=document.getElementById('trans-txt');
+  const ta=document.getElementById('trans-ta');
+  const btn=document.getElementById('trans-edit-btn');
+  if(ta.classList.contains('on')){
+    ta.classList.remove('on'); txt.style.display='block';
+    txt.textContent=ta.value; btn.textContent='Editar';
+  } else {
+    txt.style.display='none'; ta.classList.add('on');
+    ta.value=txt.textContent; btn.textContent='Listo'; ta.focus();
+  }
+}
+
+function generatePDF(){
+  const g=id=>document.getElementById(id).value.trim();
+  const cliente=g('f-cliente'),fecha=g('f-fecha'),titulo=g('f-titulo');
+  const propuesta=g('f-propuesta'),tecnica=g('f-tecnica'),entregables=g('f-entregables');
+  const costo=g('f-costo'),tiempo=g('f-tiempo');
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,H=297,ml=20,cw=170;
+  const BK=[12,12,12],YE=[245,228,0],WH=[240,237,230],MU=[100,100,95],BO=[45,45,45],CA=[25,25,25];
+  let y=0;
+  doc.setFillColor(...BK);doc.rect(0,0,W,H,'F');
+  doc.setFillColor(...YE);doc.rect(0,0,W,3,'F');
+  y=18;
+  doc.setFont('helvetica','bold');doc.setFontSize(22);doc.setTextColor(...WH);doc.text('ÁNIMO',ml,y);
+  const lw=doc.getTextWidth('ÁNIMO');
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(...MU);
+  doc.text('ESTUDIO DE ANIMACIÓN',ml+lw+5,y-5);
+  doc.text('estudio@animo.com.ar  ·  animo.com.ar',ml+lw+5,y);
+  doc.setFont('courier','normal');doc.setFontSize(9);doc.setTextColor(...MU);
+  const fd=fecha?new Date(fecha+'T00:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'}):'';
+  doc.text(fd,W-ml,y,{align:'right'});
+  y=26;doc.setDrawColor(...YE);doc.setLineWidth(0.5);doc.line(ml,y,W-ml,y);
+  y=38;doc.setFont('courier','normal');doc.setFontSize(8);doc.setTextColor(...MU);
+  doc.text('PRESUPUESTO',ml,y);doc.text('N° '+String(Date.now()).slice(-6),W-ml,y,{align:'right'});
+  y+=8;doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...WH);
+  const tl=doc.splitTextToSize(titulo||'Sin título',cw);doc.text(tl,ml,y);y+=tl.length*8+2;
+  if(cliente){doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(...MU);doc.text('Para: '+cliente.toUpperCase(),ml,y);y+=6;}
+  y+=4;
+  function sec(lbl,val){
+    if(!val)return;
+    const lh=5.5;
+    doc.setFillColor(...CA);doc.setDrawColor(...BO);doc.setLineWidth(0.3);
+    doc.roundedRect(ml,y,55,6.5,1.5,1.5,'FD');
+    doc.setFont('courier','bold');doc.setFontSize(7);doc.setTextColor(...YE);
+    doc.text(lbl.toUpperCase(),ml+4,y+4.5);y+=10;
+    doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...WH);
+    const lines=doc.splitTextToSize(val,cw);
+    if(y+lines.length*lh+12>H-25){doc.addPage();doc.setFillColor(...BK);doc.rect(0,0,W,H,'F');y=20;}
+    lines.forEach(l=>{doc.text(l,ml,y);y+=lh;});
+    y+=4;doc.setDrawColor(...BO);doc.setLineWidth(0.2);doc.line(ml,y,W-ml,y);y+=8;
+  }
+  sec('Propuesta',propuesta);sec('Técnica propuesta',tecnica);sec('Entregables',entregables);
+  if(costo||tiempo){
+    const bw=(cw-6)/2;
+    if(y+30>H-25){doc.addPage();doc.setFillColor(...BK);doc.rect(0,0,W,H,'F');y=20;}
+    [[costo,'Costo aprox.',ml],[tiempo,'Tiempo est.',ml+bw+6]].forEach(([v,l,x])=>{
+      if(!v)return;
+      doc.setFillColor(28,28,28);doc.setDrawColor(...BO);doc.setLineWidth(0.3);doc.roundedRect(x,y,bw,22,2,2,'FD');
+      doc.setFillColor(...YE);doc.roundedRect(x,y,bw,7,2,2,'F');doc.rect(x,y+3,bw,4,'F');
+      doc.setFont('courier','bold');doc.setFontSize(7);doc.setTextColor(...BK);doc.text(l.toUpperCase(),x+4,y+4.8);
+      doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(...WH);
+      doc.text(doc.splitTextToSize(v,bw-8)[0],x+4,y+16);
+    });y+=30;
+  }
+  y=Math.max(y+10,H-40);
+  doc.setDrawColor(...BO);doc.setLineWidth(0.2);doc.line(ml,y,W-ml,y);y+=6;
+  doc.setFont('courier','normal');doc.setFontSize(7.5);doc.setTextColor(...MU);
+  doc.text('Este presupuesto es orientativo y válido por 15 días corridos desde su emisión.',ml,y);y+=4.5;
+  doc.text('Los valores están sujetos a confirmación formal mediante contrato.',ml,y);
+  doc.setFillColor(...YE);doc.rect(0,H-5,W,5,'F');
+  const sn=(titulo||'presupuesto').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  doc.save('animo-'+sn+'.pdf');
+  toast('PDF generado ✓','ok');
+}
+
+function ar(ta){ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';}
+
+function resetRecUI(){
+  document.getElementById('hero').className='rec-hero';
+  setIcon('mic');
+  document.getElementById('rec-btn').style.pointerEvents='auto';
+  document.getElementById('rec-btn').classList.remove('active');
+  document.getElementById('rec-lbl').textContent='Grabá tu presupuesto';
+  document.getElementById('rec-sub').textContent='Contá el proyecto, técnica, entregables,\ncosto y tiempos en un solo audio';
+  document.getElementById('rec-timer').classList.remove('on');
+  document.getElementById('rec-dot').className='dot';
+  document.getElementById('rec-status').textContent='Tocá el micrófono para comenzar';
+  document.getElementById('live-box').classList.remove('on');
+  document.getElementById('live-final').textContent='';
+  document.getElementById('live-interim').textContent='';
+  document.querySelectorAll('.wb').forEach(b=>b.style.height='4px');
+}
+
+function resetAll(){
+  if(isRec){ isRec=false; clearInterval(timerInt); try{recog?.stop();}catch(e){} cancelAnimationFrame(animFrame); dummyStream?.getTracks().forEach(t=>t.stop()); if(actx)actx.close(); }
+  finalText=''; interimText='';
+  resetRecUI();
+  document.getElementById('trans-block').classList.remove('on');
+  document.getElementById('trans-txt').textContent='';
+  document.getElementById('trans-ta').value='';
+  document.getElementById('reproc-btn').classList.remove('on');
+  document.getElementById('fields-sec').style.display='none';
+  document.getElementById('gen-btn').disabled=true;
+  ['cliente','titulo','propuesta','tecnica','entregables','costo','tiempo'].forEach(k=>{
+    const el=document.getElementById('f-'+k); if(el) el.value='';
+    const c=document.getElementById('card-'+k); if(c) c.className='fcard';
+    const b=document.getElementById('badge-'+k); if(b){b.textContent='';b.className='fbadge';}
+  });
+  document.getElementById('f-fecha').value=new Date().toISOString().split('T')[0];
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast on'+(type?' '+type:'');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.className='toast',3000);
+}
+</script>
+</body>
+</html>
