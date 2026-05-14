@@ -10,19 +10,18 @@
 :root {
   --black: #0c0c0c; --card: #1a1a1a; --card2: #222;
   --border: #2a2a2a; --border2: #3a3a3a;
-  --yellow: #f5e400; --white: #f0ede6; --muted: #777; --muted2: #444;
+  --yellow: #ffda00; --white: #f0ede6; --muted: #777; --muted2: #444;
   --red: #e84040; --green: #3dba6e;
   --font: -apple-system,'Helvetica Neue',Arial,sans-serif;
   --mono: 'Courier New',monospace;
 }
 html,body{background:var(--black);color:var(--white);font-family:var(--font);min-height:100vh;overflow-x:hidden;}
-.header{display:flex;align-items:center;justify-content:space-between;padding:18px 18px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--black);z-index:100;}
-.logo-mark{font-weight:800;font-size:20px;letter-spacing:-0.5px;color:var(--white);}
-.logo-mark span{color:var(--yellow);}
-.logo-sub{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:0.12em;margin-top:2px;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--black);z-index:100;}
+.logo-svg{height:28px;width:auto;}
+.logo-sub{font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:0.12em;margin-top:3px;}
 .header-reset{background:transparent;border:1px solid var(--border2);border-radius:8px;color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;padding:7px 12px;cursor:pointer;}
-.main{padding:0 16px 140px;}
-.rec-hero{margin-top:24px;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color 0.2s;}
+.main{padding:0 16px 160px;}
+.rec-hero{margin-top:20px;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color 0.2s;}
 .rec-hero.recording{border-color:var(--red);}
 .rec-hero.processing{border-color:var(--yellow);}
 .rec-hero.done{border-color:var(--green);}
@@ -51,7 +50,7 @@ html,body{background:var(--black);color:var(--white);font-family:var(--font);min
 .dot.yellow{background:var(--yellow);animation:blink 0.6s infinite;}
 .dot.green{background:var(--green);}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.15}}
-.live-box{display:none;border-top:1px solid var(--border);padding:8px 16px 10px;font-size:12px;color:var(--muted);font-style:italic;line-height:1.5;min-height:34px;}
+.live-box{display:none;border-top:1px solid var(--border);padding:8px 16px 10px;font-size:12px;line-height:1.5;min-height:34px;}
 .live-box.on{display:block;}
 .trans-block{display:none;margin-top:14px;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
 .trans-block.on{display:block;}
@@ -61,7 +60,7 @@ html,body{background:var(--black);color:var(--white);font-family:var(--font);min
 .trans-txt{padding:12px 14px;font-size:13px;line-height:1.7;color:var(--white);white-space:pre-wrap;}
 textarea.trans-ta{width:100%;background:transparent;border:none;outline:none;color:var(--white);font-family:var(--font);font-size:13px;line-height:1.7;padding:12px 14px;resize:none;min-height:100px;display:none;}
 textarea.trans-ta.on{display:block;}
-.reproc-btn{display:none;width:100%;margin-top:10px;background:transparent;border:1px solid rgba(245,228,0,0.25);border-radius:10px;color:var(--yellow);font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;padding:12px;cursor:pointer;align-items:center;justify-content:center;gap:8px;}
+.reproc-btn{display:none;width:100%;margin-top:10px;background:transparent;border:1px solid rgba(255,218,0,0.25);border-radius:10px;color:var(--yellow);font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;padding:12px;cursor:pointer;align-items:center;justify-content:center;gap:8px;}
 .reproc-btn.on{display:flex;}
 .section-lbl{font-family:var(--mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px 2px;}
 .fields-grid{display:flex;flex-direction:column;gap:8px;}
@@ -78,28 +77,38 @@ textarea.fta::placeholder{color:var(--muted2);}
 textarea.fta.sm{min-height:44px;}
 input.fin{width:100%;background:transparent;border:none;outline:none;color:var(--white);font-family:var(--font);font-size:13px;padding:10px 14px;color-scheme:dark;}
 input.fin::placeholder{color:var(--muted2);}
+select.fsel{width:100%;background:var(--card2);border:none;outline:none;color:var(--white);font-family:var(--font);font-size:13px;padding:10px 14px;cursor:pointer;appearance:none;-webkit-appearance:none;}
+select.fsel option{background:var(--card2);color:var(--white);}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.gen-wrap{position:fixed;bottom:0;left:0;right:0;padding:16px 16px 28px;background:linear-gradient(to top,var(--black) 65%,transparent);}
+.gen-wrap{position:fixed;bottom:0;left:0;right:0;padding:14px 16px 28px;background:linear-gradient(to top,var(--black) 65%,transparent);}
 .gen-btn{width:100%;background:var(--yellow);color:var(--black);border:none;border-radius:12px;font-weight:800;font-size:14px;letter-spacing:0.08em;text-transform:uppercase;padding:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
 .gen-btn:active{opacity:0.8;}
 .gen-btn svg{width:16px;height:16px;}
 .gen-btn:disabled{opacity:0.35;cursor:not-allowed;}
-.toast{position:fixed;top:76px;left:50%;transform:translateX(-50%) translateY(-12px);background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:9px 16px;font-size:12px;font-family:var(--mono);color:var(--white);z-index:999;opacity:0;transition:all 0.25s;white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center;}
+.toast{position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-12px);background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:9px 16px;font-size:12px;font-family:var(--mono);color:var(--white);z-index:999;opacity:0;transition:all 0.25s;white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center;}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.ok{border-color:var(--green);color:var(--green);}
 .toast.err{border-color:var(--red);color:var(--red);}
-.spin{width:12px;height:12px;border:2px solid rgba(245,228,0,0.2);border-top-color:var(--yellow);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;flex-shrink:0;}
+.spin{width:12px;height:12px;border:2px solid rgba(255,218,0,0.2);border-top-color:var(--yellow);border-radius:50%;animation:spin 0.7s linear infinite;display:inline-block;flex-shrink:0;}
 @keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
 <div class="header">
   <div>
-    <div class="logo-mark">ÁNIM<span>O</span></div>
+    <svg class="logo-svg" viewBox="0 0 1242.5 327.8" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#fff" d="M708.5,231.7V3.1h15.2l98.9,98.5L922,3.1h15.3v228.6h-45.7l-.2-132.6-68.6,68.4-68.6-68.4v132.6h-45.7Z"/>
+      <rect fill="#ffda00" x="0" y="276.4" width="228.4" height="51.4"/>
+      <polygon fill="#fff" points="579.5 3.1 579.5 231.7 625.7 231.7 625.7 47.8 579.5 3.1"/>
+      <polygon fill="#fff" points="137.2 3.1 91.4 3.1 0 231.7 48.8 231.7 80.8 150.9 115.5 64.1 149.4 150.9 179.8 231.7 228.4 231.6 137.2 3.1"/>
+      <path fill="#fff" d="M1041.3,201.1c-22.4-22.5-33.7-50.4-33.7-83.7s11.2-61.3,33.7-83.8c22.4-22.4,50.3-33.7,83.7-33.7s61.3,11.2,83.7,33.7c22.4,22.4,33.7,50.3,33.7,83.8s-11.2,61.3-33.7,83.7c-22.4,22.4-50.3,33.7-83.7,33.7s-61.3-11.2-83.7-33.7ZM1125.2,191c20.8,0,37.7-7,50.7-21.1,13-14.1,19.6-31.6,19.6-52.4s-6.5-38.4-19.6-52.4c-13.1-14.1-30.1-21.2-51-21.2s-37.7,7.1-50.7,21.2c-13,14.1-19.6,31.6-19.6,52.4s6.5,38.3,19.6,52.4c13.1,14.1,30.1,21.1,51,21.1Z"/>
+      <polygon fill="#fff" points="451 3.2 451 146.4 307.7 3.1 292.5 3.1 292.5 231.7 338.2 231.7 338.2 90 479.9 231.7 496.7 231.7 496.7 49.1 451 3.2"/>
+    </svg>
     <div class="logo-sub">/ presupuestos</div>
   </div>
   <button class="header-reset" onclick="resetAll()">↺ Nuevo</button>
 </div>
+
 <div class="main">
   <div class="rec-hero" id="hero">
     <div class="rec-top">
@@ -119,8 +128,8 @@ input.fin::placeholder{color:var(--muted2);}
     </div>
     <div class="waveform" id="waveform"></div>
     <div class="live-box" id="live-box">
-      <span id="live-final" style="color:#f0ede6"></span>
-      <span id="live-interim" style="color:#555"></span>
+      <span id="live-final" style="color:#f0ede6;font-style:normal;"></span>
+      <span id="live-interim" style="color:#555;font-style:italic;"></span>
     </div>
     <div class="rec-status-bar">
       <div class="dot" id="rec-dot"></div>
@@ -145,6 +154,16 @@ input.fin::placeholder{color:var(--muted2);}
   <div id="fields-sec" style="display:none">
     <div class="section-lbl">Datos del presupuesto</div>
     <div class="fields-grid">
+
+      <!-- EMISOR -->
+      <div class="fcard">
+        <div class="fhdr"><div class="ftitle">Emitido por</div></div>
+        <select class="fsel" id="f-emisor">
+          <option value="Lucas Martinez">Lucas Martinez</option>
+          <option value="Lucas Topa">Lucas Topa</option>
+        </select>
+      </div>
+
       <div class="row2">
         <div class="fcard" id="card-cliente">
           <div class="fhdr"><div class="ftitle">Cliente</div><div class="fbadge" id="badge-cliente"></div></div>
@@ -155,10 +174,21 @@ input.fin::placeholder{color:var(--muted2);}
           <input class="fin" type="date" id="f-fecha"/>
         </div>
       </div>
+
       <div class="fcard" id="card-titulo">
         <div class="fhdr"><div class="ftitle">Título del proyecto</div><div class="fbadge" id="badge-titulo"></div></div>
         <input class="fin" id="f-titulo" placeholder="Nombre del proyecto..."/>
       </div>
+
+      <!-- COSTO DESTACADO -->
+      <div class="fcard" id="card-costo" style="border-color:rgba(255,218,0,0.3);">
+        <div class="fhdr" style="background:rgba(255,218,0,0.06);">
+          <div class="ftitle" style="font-size:11px;">💰 Costo aproximado</div>
+          <div class="fbadge" id="badge-costo"></div>
+        </div>
+        <input class="fin" id="f-costo" placeholder="USD ..." style="font-size:20px;font-weight:700;color:var(--yellow);padding:14px;"/>
+      </div>
+
       <div class="fcard" id="card-propuesta">
         <div class="fhdr"><div class="ftitle">Propuesta</div><div class="fbadge" id="badge-propuesta"></div></div>
         <textarea class="fta" id="f-propuesta" placeholder="Completá manualmente..." oninput="ar(this)"></textarea>
@@ -171,16 +201,11 @@ input.fin::placeholder{color:var(--muted2);}
         <div class="fhdr"><div class="ftitle">Entregables</div><div class="fbadge" id="badge-entregables"></div></div>
         <textarea class="fta" id="f-entregables" placeholder="Completá manualmente..." oninput="ar(this)"></textarea>
       </div>
-      <div class="row2">
-        <div class="fcard" id="card-costo">
-          <div class="fhdr"><div class="ftitle">Costo</div><div class="fbadge" id="badge-costo"></div></div>
-          <textarea class="fta sm" id="f-costo" placeholder="USD ..." oninput="ar(this)"></textarea>
-        </div>
-        <div class="fcard" id="card-tiempo">
-          <div class="fhdr"><div class="ftitle">Tiempo</div><div class="fbadge" id="badge-tiempo"></div></div>
-          <textarea class="fta sm" id="f-tiempo" placeholder="X semanas..." oninput="ar(this)"></textarea>
-        </div>
+      <div class="fcard" id="card-tiempo">
+        <div class="fhdr"><div class="ftitle">Tiempo estimado</div><div class="fbadge" id="badge-tiempo"></div></div>
+        <textarea class="fta sm" id="f-tiempo" placeholder="X semanas..." oninput="ar(this)"></textarea>
       </div>
+
     </div>
   </div>
 </div>
@@ -188,7 +213,7 @@ input.fin::placeholder{color:var(--muted2);}
 <div class="gen-wrap">
   <button class="gen-btn" id="gen-btn" onclick="generatePDF()" disabled>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
-    Generar PDF
+    Generar y descargar PDF
   </button>
 </div>
 <div class="toast" id="toast"></div>
@@ -197,8 +222,8 @@ input.fin::placeholder{color:var(--muted2);}
 const WORKER_URL = "https://animo-proxy.lucasmartinez-a.workers.dev";
 const MODEL = "claude-sonnet-4-20250514";
 
-let recog=null, isRec=false, timerInt=null, timerSec=0;
-let finalText='', analyser=null, animFrame=null, actx=null, stream=null;
+let recog=null,isRec=false,timerInt=null,timerSec=0;
+let finalText='',analyser=null,animFrame=null,actx=null,stream=null;
 
 window.addEventListener('load',()=>{
   document.getElementById('f-fecha').value=new Date().toISOString().split('T')[0];
@@ -219,7 +244,7 @@ async function startRec(){
     src.connect(analyser); animWave();
   }catch(e){ toast('Permiso de micrófono denegado','err'); return; }
 
-  const r=new SR();
+  const r=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
   r.lang='es-AR'; r.continuous=true; r.interimResults=true;
   finalText='';
   r.onresult=e=>{
@@ -323,7 +348,7 @@ Español rioplatense. Si algo no se menciona: null. No inventar datos.`;
   }catch(err){
     console.error(err);
     fillFields({transcripcion:text,cliente:null,titulo:null,propuesta:null,tecnica:null,entregables:null,costo:null,tiempo:null});
-    toast('Sin conexión con IA · completá los campos manualmente','err');
+    toast('Sin conexión con IA · completá los campos','err');
   }
 }
 
@@ -340,12 +365,12 @@ function fillFields(data){
     const badge=document.getElementById('badge-'+k);
     if(v&&v!=='null'){
       el.value=v;
-      if(card) card.className='fcard filled';
+      if(card){card.classList.remove('missing');card.classList.add('filled');}
       if(badge){badge.textContent='auto';badge.className='fbadge auto';}
       if(el.tagName==='TEXTAREA') ar(el);
     }else{
       el.value='';
-      if(card) card.className='fcard missing';
+      if(card){card.classList.remove('filled');card.classList.add('missing');}
       if(badge){badge.textContent='manual';badge.className='fbadge manual';}
       missing=true;
     }
@@ -395,64 +420,129 @@ function generatePDF(){
   const titulo=g('f-titulo'),cliente=g('f-cliente'),fecha=g('f-fecha');
   const propuesta=g('f-propuesta'),tecnica=g('f-tecnica'),entregables=g('f-entregables');
   const costo=g('f-costo'),tiempo=g('f-tiempo');
+  const emisor=g('f-emisor');
+
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const W=210,H=297,ml=20,cw=170;
-  const BK=[12,12,12],YE=[245,228,0],WH=[240,237,230],MU=[100,100,95],BO=[45,45,45],CA=[25,25,25];
+  const BK=[12,12,12],YE=[255,218,0],WH=[240,237,230],MU=[100,100,95],BO=[45,45,45],CA=[28,28,28];
   let y=0;
+
+  // Fondo negro
   doc.setFillColor(...BK);doc.rect(0,0,W,H,'F');
+  // Franja amarilla top
   doc.setFillColor(...YE);doc.rect(0,0,W,3,'F');
-  y=18;
-  doc.setFont('helvetica','bold');doc.setFontSize(22);doc.setTextColor(...WH);doc.text('ÁNIMO',ml,y);
+
+  // ── LOGO (paths del SVG escalados a ~40mm de ancho)
+  // Usamos texto como fallback ya que jsPDF no renderiza SVG paths
+  y=20;
+  doc.setFont('helvetica','bold');doc.setFontSize(28);doc.setTextColor(...WH);
+  doc.text('ÁNIMO',ml,y);
   const lw=doc.getTextWidth('ÁNIMO');
-  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(...MU);
-  doc.text('ESTUDIO DE ANIMACIÓN',ml+lw+5,y-5);
-  doc.text('estudio@animo.com.ar  ·  animo.com.ar',ml+lw+5,y);
-  doc.setFont('courier','normal');doc.setFontSize(9);doc.setTextColor(...MU);
+  // Subrayado amarillo bajo ÁNIMO
+  doc.setFillColor(...YE);
+  doc.rect(ml,y+2,lw,2,'F');
+
+  // Info contacto derecha
+  doc.setFont('courier','normal');doc.setFontSize(8);doc.setTextColor(...MU);
   const fd=fecha?new Date(fecha+'T00:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'}):'';
-  doc.text(fd,W-ml,y,{align:'right'});
-  y=26;doc.setDrawColor(...YE);doc.setLineWidth(0.5);doc.line(ml,y,W-ml,y);
-  y=38;doc.setFont('courier','normal');doc.setFontSize(8);doc.setTextColor(...MU);
-  doc.text('PRESUPUESTO',ml,y);doc.text('N° '+String(Date.now()).slice(-6),W-ml,y,{align:'right'});
-  y+=8;doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...WH);
-  const tl=doc.splitTextToSize(titulo||'Sin título',cw);doc.text(tl,ml,y);y+=tl.length*8+2;
-  if(cliente){doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(...MU);doc.text('Para: '+cliente.toUpperCase(),ml,y);y+=6;}
+  doc.text(fd,W-ml,y-6,{align:'right'});
+  doc.text('martinez@estudioanimo.tv',W-ml,y,{align:'right'});
+  doc.text('topa@estudioanimo.tv',W-ml,y+5,{align:'right'});
+  doc.text('www.estudioanimo.tv',W-ml,y+10,{align:'right'});
+
+  y=38;
+  doc.setDrawColor(...YE);doc.setLineWidth(0.4);doc.line(ml,y,W-ml,y);
+
+  // N° presupuesto
+  y=46;
+  doc.setFont('courier','normal');doc.setFontSize(8);doc.setTextColor(...MU);
+  doc.text('PRESUPUESTO',ml,y);
+  doc.text('N° '+String(Date.now()).slice(-6),W-ml,y,{align:'right'});
+
+  // Título proyecto
+  y+=9;
+  doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(...WH);
+  const tl=doc.splitTextToSize(titulo||'Sin título',cw);
+  doc.text(tl,ml,y);y+=tl.length*8+2;
+
+  // Cliente
+  if(cliente){
+    doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(...MU);
+    doc.text('Para: '+cliente.toUpperCase(),ml,y);y+=7;
+  }
   y+=4;
+
+  // ── COSTO — BLOQUE GRANDE Y DESTACADO
+  if(costo){
+    // Fondo card costo
+    doc.setFillColor(22,22,10);
+    doc.setDrawColor(...YE);doc.setLineWidth(0.8);
+    doc.roundedRect(ml,y,cw,26,3,3,'FD');
+    // Label
+    doc.setFont('courier','bold');doc.setFontSize(7);doc.setTextColor(...MU);
+    doc.text('INVERSIÓN APROXIMADA',ml+6,y+7);
+    // Valor grande
+    doc.setFont('helvetica','bold');doc.setFontSize(22);doc.setTextColor(...YE);
+    doc.text(costo,ml+6,y+20);
+    y+=34;
+  }
+
+  // ── SECCIONES
   function sec(lbl,val){
     if(!val)return;
     const lh=5.5;
+    if(y+20>H-40){doc.addPage();doc.setFillColor(...BK);doc.rect(0,0,W,H,'F');y=20;}
     doc.setFillColor(...CA);doc.setDrawColor(...BO);doc.setLineWidth(0.3);
     doc.roundedRect(ml,y,55,6.5,1.5,1.5,'FD');
     doc.setFont('courier','bold');doc.setFontSize(7);doc.setTextColor(...YE);
     doc.text(lbl.toUpperCase(),ml+4,y+4.5);y+=10;
     doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...WH);
     const lines=doc.splitTextToSize(val,cw);
-    if(y+lines.length*lh+12>H-25){doc.addPage();doc.setFillColor(...BK);doc.rect(0,0,W,H,'F');y=20;}
+    if(y+lines.length*lh+8>H-40){doc.addPage();doc.setFillColor(...BK);doc.rect(0,0,W,H,'F');y=20;}
     lines.forEach(l=>{doc.text(l,ml,y);y+=lh;});
-    y+=4;doc.setDrawColor(...BO);doc.setLineWidth(0.2);doc.line(ml,y,W-ml,y);y+=8;
+    y+=5;doc.setDrawColor(...BO);doc.setLineWidth(0.2);doc.line(ml,y,W-ml,y);y+=8;
   }
-  sec('Propuesta',propuesta);sec('Técnica propuesta',tecnica);sec('Entregables',entregables);
-  if(costo||tiempo){
-    const bw=(cw-6)/2;
-    if(y+30>H-25){doc.addPage();doc.setFillColor(...BK);doc.rect(0,0,W,H,'F');y=20;}
-    [[costo,'Costo aprox.',ml],[tiempo,'Tiempo est.',ml+bw+6]].forEach(([v,l,x])=>{
-      if(!v)return;
-      doc.setFillColor(28,28,28);doc.setDrawColor(...BO);doc.setLineWidth(0.3);doc.roundedRect(x,y,bw,22,2,2,'FD');
-      doc.setFillColor(...YE);doc.roundedRect(x,y,bw,7,2,2,'F');doc.rect(x,y+3,bw,4,'F');
-      doc.setFont('courier','bold');doc.setFontSize(7);doc.setTextColor(...BK);doc.text(l.toUpperCase(),x+4,y+4.8);
-      doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(...WH);
-      doc.text(doc.splitTextToSize(v,bw-8)[0],x+4,y+16);
-    });y+=30;
-  }
-  y=Math.max(y+10,H-40);
-  doc.setDrawColor(...BO);doc.setLineWidth(0.2);doc.line(ml,y,W-ml,y);y+=6;
-  doc.setFont('courier','normal');doc.setFontSize(7.5);doc.setTextColor(...MU);
-  doc.text('Este presupuesto es orientativo y válido por 15 días corridos desde su emisión.',ml,y);y+=4.5;
-  doc.text('Los valores están sujetos a confirmación formal mediante contrato.',ml,y);
+
+  sec('Propuesta',propuesta);
+  sec('Técnica propuesta',tecnica);
+  sec('Entregables',entregables);
+  sec('Tiempo estimado',tiempo);
+
+  // ── FIRMA
+  const firmaY=Math.max(y+10,H-52);
+  doc.setDrawColor(...BO);doc.setLineWidth(0.2);doc.line(ml,firmaY,W-ml,firmaY);
+
+  // Línea de firma
+  const firmaX=ml+10;
+  doc.setDrawColor(...MU);doc.setLineWidth(0.3);
+  doc.line(firmaX,firmaY+18,firmaX+60,firmaY+18);
+  doc.setFont('courier','normal');doc.setFontSize(8);doc.setTextColor(...MU);
+  doc.text(emisor,firmaX,firmaY+23);
+  doc.text('Estudio Ánimo',firmaX,firmaY+28);
+
+  // Nota legal
+  doc.setFont('courier','normal');doc.setFontSize(7);doc.setTextColor(60,60,55);
+  doc.text('Este presupuesto es orientativo y válido por 15 días corridos desde su emisión.',ml,H-16);
+  doc.text('Los valores están sujetos a confirmación formal mediante presupuesto oficial.',ml,H-11);
+
+  // Franja amarilla bottom
   doc.setFillColor(...YE);doc.rect(0,H-5,W,5,'F');
+
+  // ── GUARDAR
   const sn=(titulo||'presupuesto').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
-  doc.save('animo-'+sn+'.pdf');
-  toast('PDF generado ✓','ok');
+  const filename='animo-'+sn+'.pdf';
+
+  // Descargar con link click para mejor compatibilidad mobile
+  const pdfBlob=doc.output('blob');
+  const url=URL.createObjectURL(pdfBlob);
+  const a=document.createElement('a');
+  a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),3000);
+
+  toast('PDF descargado ✓','ok');
 }
 
 function ar(ta){ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';}
